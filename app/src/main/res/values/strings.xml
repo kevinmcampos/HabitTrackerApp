@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HabitTrackerApp</string>
+    <string name="hello_database">Hello database!</string>
 </resources>

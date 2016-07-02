@@ -10,6 +10,8 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import br.com.memorify.habittrackerapp.model.Habit;
+import br.com.memorify.habittrackerapp.model.HabitContract;
+import br.com.memorify.habittrackerapp.model.HabitContract.HabitEntry;
 
 public class DatabaseManager {
 
@@ -52,7 +54,7 @@ public class DatabaseManager {
         try {
             getWritableDatabase();
             if (sqlite != null) {
-                insertId = sqlite.insert(Habit.TABLE_NAME, null, habit.getContentValues());
+                insertId = sqlite.insert(HabitEntry.TABLE_NAME, null, habit.getContentValues());
             }
         } catch (SQLException sqlerror) {
             Log.e("Insert into table error", sqlerror.getMessage());
@@ -67,9 +69,9 @@ public class DatabaseManager {
             getWritableDatabase();
             ContentValues contentValues = habit.getContentValues();
             if (sqlite != null) {
-                String where = Habit.COLUMN__ID + " = ?";
+                String where = HabitEntry.COLUMN__ID + " = ?";
                 String[] args = {Long.toString(habit._id)};
-                numberRowsAffected = sqlite.update(Habit.TABLE_NAME, contentValues, where, args);
+                numberRowsAffected = sqlite.update(HabitEntry.TABLE_NAME, contentValues, where, args);
             }
         } catch (SQLException sqlerror) {
             Log.e("Update into table error", sqlerror.getMessage());
@@ -78,32 +80,24 @@ public class DatabaseManager {
         return numberRowsAffected;
     }
 
-    public Habit getHabit(long id, String[] columns) {
-        Habit habit = null;
+    public Cursor getHabit(long id, String[] columns) {
         try {
             getReadableDatabase();
             if (sqlite != null) {
-                String selection = Habit.COLUMN__ID + " = " + id;
-                Cursor cursor = sqlite.query(Habit.TABLE_NAME, columns, selection, null, null, null, null);
-                cursor.moveToFirst();
-                if (cursor.isAfterLast()) {
-                    Log.e("NK", "DatabaseManager unable to find object having " + selection);
-                } else {
-                    habit = Habit.fromCursor(cursor);
-                }
-                cursor.close();
+                String selection = HabitEntry.COLUMN__ID + " = " + id;
+                return sqlite.query(HabitEntry.TABLE_NAME, columns, selection, null, null, null, null);
             }
         } catch (SQLException sqlerror) {
             Log.e("Select from table error", sqlerror.getMessage());
         }
-        return habit;
+        return null;
     }
 
     public boolean deleteAllHabits() {
         try {
             getWritableDatabase();
             if (sqlite != null) {
-                sqlite.delete(Habit.TABLE_NAME, null, null);
+                sqlite.delete(HabitEntry.TABLE_NAME, null, null);
             }
         } catch (SQLException sqlerror) {
             Log.e("Delete into table error", sqlerror.getMessage());

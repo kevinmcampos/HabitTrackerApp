@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import br.com.memorify.habittrackerapp.model.Habit;
+import br.com.memorify.habittrackerapp.model.HabitContract;
+import br.com.memorify.habittrackerapp.model.HabitContract.HabitEntry;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -13,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "habits.db";
     private static final int DATABASE_VERSION = 1;
     private static final String CREATE_TABLES[] = {
-            Habit.Meta.CREATE_TABLE(),
+            HabitEntry.Meta.CREATE_TABLE(),
     };
 
     private static DatabaseHelper mInstance;
@@ -38,6 +40,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(DatabaseHelper.class.getName(), "Should upgrade database from version " + oldVersion + " to " + newVersion);
+        Log.w(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ". Destroying all old data.");
+        deleteDatabase(db);
+        onCreate(db);
+    }
+
+    public void deleteDatabase(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXIST "+ HabitEntry.TABLE_NAME);
     }
 }
