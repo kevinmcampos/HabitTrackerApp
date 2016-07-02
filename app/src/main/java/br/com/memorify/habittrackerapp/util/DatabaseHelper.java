@@ -19,6 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     };
 
     private static DatabaseHelper mInstance;
+    private Context context;
 
     public static DatabaseHelper getInstance(Context context) {
         if (mInstance == null) {
@@ -29,6 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -41,11 +43,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ". Destroying all old data.");
-        deleteDatabase(db);
+        deleteDatabase();
         onCreate(db);
     }
 
-    public void deleteDatabase(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXIST "+ HabitEntry.TABLE_NAME);
+    public void deleteDatabase() {
+        context.deleteDatabase(DATABASE_NAME);
     }
 }
